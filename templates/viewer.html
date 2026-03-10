@@ -161,44 +161,45 @@
   </div>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.4.168/pdf.min.mjs" type="module"></script>
-<script type="module">
-  import * as pdfjsLib from 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.4.168/pdf.min.mjs';
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script>
+  // PDF.js 3.x – bewährte stabile Version
+  var pdfjsLib = window['pdfjs-dist/build/pdf'];
   pdfjsLib.GlobalWorkerOptions.workerSrc =
-    'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.4.168/pdf.worker.min.mjs';
+    'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
-  const container = document.getElementById('pdf-container');
-  const loading   = document.getElementById('pdf-loading');
-  const errorBox  = document.getElementById('pdf-error');
+  var container = document.getElementById('pdf-container');
+  var loading   = document.getElementById('pdf-loading');
+  var errorBox  = document.getElementById('pdf-error');
 
-  async function renderPDF() {
-    try {
-      const pdf = await pdfjsLib.getDocument('protokoll.pdf').promise;
-      loading.remove();
+  pdfjsLib.getDocument('protokoll.pdf').promise.then(function(pdf) {
+    loading.style.display = 'none';
 
-      for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
-        const page     = await pdf.getPage(pageNum);
-        const viewport = page.getViewport({ scale: 1.6 });
-
-        const canvas    = document.createElement('canvas');
-        canvas.width    = viewport.width;
-        canvas.height   = viewport.height;
+    var renderPage = function(pageNum) {
+      return pdf.getPage(pageNum).then(function(page) {
+        var viewport = page.getViewport({ scale: 1.6 });
+        var canvas   = document.createElement('canvas');
+        canvas.width  = viewport.width;
+        canvas.height = viewport.height;
         container.appendChild(canvas);
-
-        await page.render({
+        return page.render({
           canvasContext: canvas.getContext('2d'),
-          viewport
+          viewport: viewport
         }).promise;
-      }
-    } catch (err) {
-      loading.remove();
-      errorBox.style.display = 'block';
-      console.error('PDF.js error:', err);
-    }
-  }
+      });
+    };
 
-  renderPDF();
+    var chain = Promise.resolve();
+    for (var i = 1; i <= pdf.numPages; i++) {
+      chain = chain.then(renderPage.bind(null, i));
+    }
+    return chain;
+
+  }).catch(function(err) {
+    loading.style.display = 'none';
+    errorBox.style.display = 'block';
+    console.error('PDF.js Fehler:', err);
+  });
 </script>
 
 </body>
