@@ -82,8 +82,11 @@ def render(template_path: pathlib.Path, variables: dict) -> str:
 def load_description(versuch_path: pathlib.Path, versuch: str) -> dict:
     desc_file = versuch_path / "description.json"
     if desc_file.exists():
-        with open(desc_file, encoding="utf-8") as f:
-            return json.load(f)
+        try:
+            with open(desc_file, encoding="utf-8") as f:
+                return json.load(f)
+        except json.JSONDecodeError as e:
+            print(f"  ⚠ Ungültiges JSON in {desc_file}: {e} – wird übersprungen")
     return {"title": versuch, "summary": ""}
 
 
@@ -203,6 +206,10 @@ def generate_site(catalog: list, vars: dict):
         for v in p["versuche"]:
             viewer_dir = SITE_DIR / "viewer" / p["slug"] / v["slug"]
             viewer_dir.mkdir(parents=True, exist_ok=True)
+
+            # PDF direkt in den Viewer-Ordner kopieren damit der relative Pfad stimmt
+            pdf_src = DOCS_DIR / p["praktikum"] / v["name"] / "protokoll.pdf"
+            shutil.copy2(pdf_src, viewer_dir / "protokoll.pdf")
 
             summary = v["description"].get("summary", "") or "Kein Beschreibungstext vorhanden."
             viewer_vars = {
