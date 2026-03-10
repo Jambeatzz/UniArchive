@@ -17,7 +17,6 @@
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    /* CSS-Variablen werden von build.py aus style.json befüllt */
     :root {
       --bg:           {{COLOR_BG}};
       --surface:      {{COLOR_SURFACE}};
@@ -41,7 +40,6 @@
       overflow: hidden;
     }
 
-    /* ── Navigationsleiste ── */
     nav {
       display: flex;
       align-items: center;
@@ -73,7 +71,6 @@
       color: var(--accent2);
     }
 
-    /* ── Info-Leiste mit Beschreibung ── */
     .info-bar {
       padding: 0.6rem 1.5rem;
       background: var(--bg);
@@ -88,7 +85,6 @@
 
     .info-bar .summary { flex: 1; line-height: 1.5; }
 
-    /* ── Download-Button – Farbe folgt accent aus style.json ── */
     .info-bar a.dl {
       color: var(--accent);
       text-decoration: none;
@@ -103,8 +99,39 @@
 
     .info-bar a.dl:hover { background: var(--accent); color: var(--bg); }
 
-    /* ── PDF-Viewer ── */
-    iframe { flex: 1; width: 100%; border: none; background: #fff; }
+    /* ── PDF.js Canvas-Viewer ── */
+    #pdf-container {
+      flex: 1;
+      overflow-y: auto;
+      background: #525659;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 1.5rem 1rem;
+      gap: 1rem;
+    }
+
+    #pdf-container canvas {
+      display: block;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.5);
+      max-width: 100%;
+    }
+
+    #pdf-loading {
+      color: #ccc;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      margin-top: 3rem;
+    }
+
+    #pdf-error {
+      display: none;
+      color: #f88;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      margin-top: 3rem;
+      text-align: center;
+    }
 
   </style>
 </head>
@@ -125,8 +152,54 @@
   <a class="dl" href="protokoll.pdf" download>↓ PDF</a>
 </div>
 
-<!-- [AUTO] PDF-Pfad wird von build.py gesetzt -->
-<iframe src="protokoll.pdf" title="Protokoll {{VERSUCH_NAME}}"></iframe>
+<!-- PDF.js Viewer – rendert das PDF seitenweise als Canvas -->
+<div id="pdf-container">
+  <div id="pdf-loading">PDF wird geladen …</div>
+  <div id="pdf-error">
+    PDF konnte nicht geladen werden.<br>
+    <a href="protokoll.pdf" download style="color: var(--accent);">↓ Direkt herunterladen</a>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.4.168/pdf.min.mjs" type="module"></script>
+<script type="module">
+  import * as pdfjsLib from 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.4.168/pdf.min.mjs';
+
+  pdfjsLib.GlobalWorkerOptions.workerSrc =
+    'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.4.168/pdf.worker.min.mjs';
+
+  const container = document.getElementById('pdf-container');
+  const loading   = document.getElementById('pdf-loading');
+  const errorBox  = document.getElementById('pdf-error');
+
+  async function renderPDF() {
+    try {
+      const pdf = await pdfjsLib.getDocument('protokoll.pdf').promise;
+      loading.remove();
+
+      for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+        const page     = await pdf.getPage(pageNum);
+        const viewport = page.getViewport({ scale: 1.6 });
+
+        const canvas    = document.createElement('canvas');
+        canvas.width    = viewport.width;
+        canvas.height   = viewport.height;
+        container.appendChild(canvas);
+
+        await page.render({
+          canvasContext: canvas.getContext('2d'),
+          viewport
+        }).promise;
+      }
+    } catch (err) {
+      loading.remove();
+      errorBox.style.display = 'block';
+      console.error('PDF.js error:', err);
+    }
+  }
+
+  renderPDF();
+</script>
 
 </body>
 </html>
