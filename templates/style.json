@@ -1,0 +1,79 @@
+{
+  "__comment": "style.json – Hier kannst du sicher alle visuellen Einstellungen ändern.",
+
+  "// ═══════════════════════════════════════════════": "",
+  "// FARBEN  ← sicher änderbar": "",
+  "// ═══════════════════════════════════════════════": "",
+
+  "colors": {
+    "__comment": "Alle Farbwerte. Hex-Codes oder CSS-Werte möglich.",
+    "bg":       "#0e0f0f",
+    "surface":  "#161718",
+    "border":   "#2a2b2d",
+    "accent":   "#c8f06e",
+    "accent2":  "#6ec8f0",
+    "text":     "#e8e6e1",
+    "muted":    "#7a7872",
+    "hover_surface": "#1c1d1f"
+  },
+
+  "// ════════════════════════════════════════════════": "",
+  "// SCHRIFTEN  ← sicher änderbar": "",
+  "// ════════════════════════════════════════════════": "",
+
+  "fonts": {
+    "__comment": "Google Fonts Namen. Falls du andere Fonts willst, auch google_fonts_url anpassen.",
+    "display": "'DM Serif Display', Georgia, serif",
+    "mono":    "'DM Mono', monospace",
+    "google_fonts_url": "https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@300;400;500&display=swap"
+  },
+
+  "// ════════════════════════════════════════════════": "",
+  "// ABSTÄNDE  ← sicher änderbar": "",
+  "// ════════════════════════════════════════════════": "",
+
+  "spacing": {
+    "__comment": "Abstände und Größen. CSS-Werte möglich (rem, px, %).",
+    "header_padding":    "4rem 2rem 2rem",
+    "main_padding":      "3rem 2rem 6rem",
+    "max_width":         "900px",
+    "base_font_size":    "14px",
+    "item_padding":      "0.75rem 1rem",
+    "block_gap":         "3.5rem"
+  },
+
+  "// ════════════════════════════════════════════════": "",
+  "// TYPOGRAFIE  ← sicher änderbar": "",
+  "// ════════════════════════════════════════════════": "",
+
+  "typography": {
+    "__comment": "Schriftgrößen und -gewichte.",
+    "h1_size":        "clamp(2.5rem, 6vw, 4.5rem)",
+    "h2_size":        "1.6rem",
+    "label_size":     "11px",
+    "body_size":      "14px",
+    "summary_size":   "12px",
+    "badge_size":     "10px",
+    "nav_title_size": "1.1rem"
+  },
+
+  "// ════════════════════════════════════════════════": "",
+  "// ANIMATIONEN  ← sicher änderbar": "",
+  "// ════════════════════════════════════════════════": "",
+
+  "animation": {
+    "__comment": "Einblend-Animation der Praktikumsblöcke. duration z.B. '0.5s' oder '0s' zum Deaktivieren.",
+    "duration":  "0.5s",
+    "easing":    "ease",
+    "delay_step": "0.05s"
+  },
+
+  "// ════════════════════════════════════════════════": "",
+  "// NOISE-OVERLAY  ← sicher änderbar": "",
+  "// ════════════════════════════════════════════════": "",
+
+  "noise": {
+    "__comment": "Körniger Hintergrundeffekt. opacity: 0 zum Deaktivieren.",
+    "opacity": "0.4"
+  }
+}

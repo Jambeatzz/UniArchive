@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Praktikumsarchiv</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <!-- [FONT] Schrift-URL aus style.json → fonts.google_fonts_url -->
+  <link href="{{FONT_URL}}" rel="stylesheet">
+  <style>
+
+    /* ┌─────────────────────────────────────────────────────────┐
+       │  ACHTUNG: CSS hier NICHT direkt bearbeiten!             │
+       │  Farben, Fonts und Abstände → templates/style.json      │
+       └─────────────────────────────────────────────────────────┘ */
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* CSS-Variablen werden von build.py aus style.json befüllt */
+    :root {
+      --bg:            {{COLOR_BG}};
+      --surface:       {{COLOR_SURFACE}};
+      --border:        {{COLOR_BORDER}};
+      --accent:        {{COLOR_ACCENT}};
+      --accent2:       {{COLOR_ACCENT2}};
+      --text:          {{COLOR_TEXT}};
+      --muted:         {{COLOR_MUTED}};
+      --hover-surface: {{COLOR_HOVER_SURFACE}};
+      --font-display:  {{FONT_DISPLAY}};
+      --font-mono:     {{FONT_MONO}};
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-mono);
+      font-size: {{FONT_SIZE_BODY}};
+      line-height: 1.7;
+      min-height: 100vh;
+    }
+
+    /* Noise-Overlay – Stärke in style.json → noise.opacity */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 9999;
+      opacity: {{NOISE_OPACITY}};
+    }
+
+    /* ── Header ── */
+    header {
+      padding: {{HEADER_PADDING}};
+      max-width: {{MAX_WIDTH}};
+      margin: 0 auto;
+      border-bottom: 1px solid var(--border);
+    }
+
+    header .label {
+      font-size: {{FONT_SIZE_LABEL}};
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.75rem;
+    }
+
+    header h1 {
+      font-family: var(--font-display);
+      font-size: {{FONT_SIZE_H1}};
+      font-weight: 400;
+      line-height: 1.1;
+      color: var(--text);
+      letter-spacing: -0.02em;
+    }
+
+    header h1 em { font-style: italic; color: var(--accent); }
+
+    header .meta { margin-top: 1rem; color: var(--muted); font-size: 12px; }
+
+    /* ── Main ── */
+    main {
+      max-width: {{MAX_WIDTH}};
+      margin: 0 auto;
+      padding: {{MAIN_PADDING}};
+    }
+
+    /* ── Praktikumsblöcke – Animation aus style.json → animation ── */
+    .praktikum-block {
+      margin-bottom: {{BLOCK_GAP}};
+      animation: fadeUp {{ANIM_DURATION}} {{ANIM_EASING}} both;
+    }
+
+    .praktikum-block:nth-child(1) { animation-delay: calc({{ANIM_DELAY_STEP}} * 1); }
+    .praktikum-block:nth-child(2) { animation-delay: calc({{ANIM_DELAY_STEP}} * 2); }
+    .praktikum-block:nth-child(3) { animation-delay: calc({{ANIM_DELAY_STEP}} * 3); }
+    .praktikum-block:nth-child(4) { animation-delay: calc({{ANIM_DELAY_STEP}} * 4); }
+    .praktikum-block:nth-child(5) { animation-delay: calc({{ANIM_DELAY_STEP}} * 5); }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .praktikum-header {
+      display: flex;
+      align-items: baseline;
+      gap: 1rem;
+      margin-bottom: 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .praktikum-header h2 {
+      font-family: var(--font-display);
+      font-size: {{FONT_SIZE_H2}};
+      font-weight: 400;
+      color: var(--text);
+    }
+
+    .praktikum-header .count {
+      font-size: {{FONT_SIZE_LABEL}};
+      color: var(--muted);
+      letter-spacing: 0.1em;
+    }
+
+    /* ── Versuchs-Liste ── */
+    .versuch-list { list-style: none; display: grid; gap: 2px; }
+
+    .versuch-item {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: start;
+      gap: 1rem;
+      padding: {{ITEM_PADDING}};
+      background: var(--surface);
+      border: 1px solid transparent;
+      border-radius: 4px;
+      transition: border-color 0.15s, background 0.15s;
+    }
+
+    .versuch-item:hover {
+      border-color: var(--border);
+      background: var(--hover-surface);
+    }
+
+    .versuch-name a {
+      color: var(--accent2);
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 13px;
+      letter-spacing: 0.02em;
+      transition: color 0.15s;
+    }
+
+    .versuch-name a:hover { color: var(--accent); }
+    .versuch-name a::before { content: '↗ '; font-size: 10px; opacity: 0.6; }
+
+    .versuch-summary {
+      margin-top: 0.25rem;
+      font-size: {{FONT_SIZE_SUMMARY}};
+      color: var(--muted);
+      line-height: 1.5;
+      max-width: 60ch;
+    }
+
+    .versuch-badge {
+      font-size: {{FONT_SIZE_BADGE}};
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      padding: 2px 6px;
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      white-space: nowrap;
+      margin-top: 2px;
+    }
+
+    /* ── Footer ── */
+    footer {
+      text-align: center;
+      padding: 2rem;
+      color: var(--muted);
+      font-size: {{FONT_SIZE_LABEL}};
+      border-top: 1px solid var(--border);
+      letter-spacing: 0.05em;
+    }
+
+    /* ── Leer-Zustand ── */
+    .empty-state { text-align: center; padding: 5rem 2rem; color: var(--muted); }
+    .empty-state h2 {
+      font-family: var(--font-display);
+      font-size: {{FONT_SIZE_H2}};
+      font-weight: 400;
+      margin-bottom: 1rem;
+    }
+
+  </style>
+</head>
+<body>
+
+<header>
+  <!-- [TEXT] Obere Beschriftung – frei änderbar -->
+  <div class="label">Persönliches Archiv</div>
+  <!-- [TEXT] Haupttitel – <em> wird in accent-Farbe dargestellt -->
+  <h1>Praktikums<em>archiv</em></h1>
+  <!-- [AUTO] Datum und Statistik – wird von build.py befüllt -->
+  <div class="meta">Zuletzt aktualisiert: {{UPDATED}} &nbsp;·&nbsp; {{TOTAL_VERSUCHE}} Versuche in {{TOTAL_PRAKTIKA}} Praktika</div>
+</header>
+
+<main>
+  <!-- [AUTO] Wird von build.py generiert – hier nichts ändern -->
+  {{CONTENT}}
+</main>
+
+<footer>
+  <!-- [TEXT] Footer-Text – frei änderbar -->
+  Generiert von build.py &nbsp;·&nbsp; Gehostet auf Cloudflare Pages
+</footer>
+
+</body>
+</html>
